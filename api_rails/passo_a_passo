@@ -1,0 +1,493 @@
+CRIANDO APLICACAO
+
+rails new [nome_aplicacao] -T -d postgresql
+
+mudar no arquivo [nome_aplicacao]/config/database.yml
+	default: &default
+		adapter: postgresql
+		encoding: unicode
+		# For details on connection pooling, see rails configuration guide
+		# http://guides.rubyonrails.org/configuring.html#database-pooling
+		pool: 5
+	...
+	production:
+		<<: *default
+		database: [nome_aplicacao]_production
+		username: [nome_aplicacao]
+		password: <%= ENV['APLICACAO_DATABASE_PASSWORD'] %>
+para
+	default: &default
+		adapter: postgresql
+		encoding: unicode
+		# For details on connection pooling, see rails configuration
+		# http://guides.rubyonrails.org/configuring.html#database-pooling
+		pool: 5
+		port: [porta]
+		host: [host]
+		username: [usuario]
+		password: [senha]
+	...
+	production:
+		<<: *default
+		database: [nome_aplicacao]_production
+		# username: [nome_aplicacao]
+		# password: <%= ENV['MAIN_DATABASE_PASSWORD'] %>
+
+adicionar no arquivo [nome_aplicacao]/Gemfile
+	gem 'rspec-rails'
+	gem 'factory_girl_rails'
+
+criar o arquivo [nome_aplicacao]/lib/tasks/[nome_aplicacao]_tasks.rake
+	task 'spec:engines' do
+		system 'RAILS_ENV=test rake db:drop db:create'
+		system 'RAILS_ENV=test rake db:seed'
+	end
+	task 'db:migrate:engines' do
+	end
+
+entrar na pasta [nome_aplicacao]
+
+bundle install
+
+para executar todos os testes
+	entrar na pasta [nome_aplicacao]
+	rake spec:engines
+
+--------------------------
+
+CRIANDO ENGINE
+
+rails plugin new [nome_engine] --full --mountable --dummy-path ../[nome_aplicacao] -T -d postgresql
+
+quando aparecer algo sobre sobrescrever arquivos
+	Overwrite /home/stephann/rails_workspace/teste_engine_dummy/main_app/Gemfile? (enter 'h' for help) [Ynaqdh]
+	apertar 'q' e enter
+
+adicionar no arquivo [nome_aplicacao]/Gemfile
+	gem '[nome_engine]', path: '../[nome_engine]'
+
+entrar na pasta [nome_aplicacao]
+
+bundle install
+
+adicionar no arquivo [nome_aplicacao]/config/routes.rb
+	mount [NomeEngine]::Engine, at: '[nome_engine]'
+
+adicionar no arquivo [nome_aplicacao]/config/application.rb
+	require File.expand_path('../../../[nome_engine]/lib/[nome_engine]/engine', __FILE__)
+
+
+adicionar no arquivo [nome_engine].gemsepc
+	s.add_development_dependency 'rspec-rails', 'x.x.x'
+	s.add_development_dependency 'factory_girl_rails', 'x.x.x'
+
+entrar na pasta [nome_engine]
+
+bundle install
+
+rails g rspec:install
+
+mudar no arquivo spec/rails_helper.rb
+	require File.expand_path('../../config/environment', __FILE__)
+para
+	require File.expand_path('../../../[nome_aplicacao]/config/environment', __FILE__)
+
+mudar no arquivo spec/rails_helper.rb
+	Dir[Rails.root.join('spec/support/**/*.rb')].each {|f| require f}
+para
+	Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each {|f| require f}
+
+adicionar no arquivo spec/rails_helper.rb
+	require 'factory_girl_rails'
+
+adicionar no arquivo lib/[nome_engine]/engine.rb
+	require File.expand_path('../../../../[nome_aplicacao]/config/initializers/inflections', __FILE__)
+	
+	module Subscribem
+		class Engine < Rails::Engine
+			...
+			config.generators do |g|
+				g.test_framework :rspec, view_specs: false, fixture:false
+				g.integration_tool :rspec
+				g.fixture_replacement :factory_girl, dir: 'spec/factories'
+			end
+		end
+	end
+
+adicionar no arquivo lib/tasks/[nome_aplicacao]_tasks.rake
+	task 'spec:engines' do
+		system 'RAILS_ENV=test rake db:drop db:create'
+		...
+		system 'cd ../[nome_engine] && RAILS_ENV=test rake db:migrate'	
+		...
+		system 'RAILS_ENV=test rake db:seed'
+		...
+		system 'cd ../[nome_engine] && rspec spec'	
+	end
+	task 'db:migrate:engines' do
+		...
+		system 'cd ../[nome_engine] && rake db:migrate'
+	end
+
+--------------
+
+ADICIONANDO DEVICE A ENGINE
+
+adicionar no arquivo [nome_engine].gemsepc
+	s.add_dependency 'devise', 'x.x.x'
+	s.add_development_dependency 'rspec-rails', 'x.x.x'
+	s.add_development_dependency 'factory_girl_rails', 'x.x.x'
+
+entrar na pasta [nome_engine]
+
+bundle install
+
+rails generate devise:install
+
+rails generate devise [model] [atributos]
+
+rails generate devise:views
+
+adicionar no arquivo lib/[nome_engine]/engine.rb
+	...
+	require 'devise'
+
+	module [nome_engine]
+		...
+	end
+
+modificar no arquivo [nome_engine]/config/initializers/devise.rb
+	Devise.setup do |config|
+		...
+		# config.router_name = :my_engine
+		...
+	end
+para
+	Devise.setup do |config|
+		...
+		config.router_name = :[nome_engine]
+		...
+	end
+
+modificar no arquivo [nome_engine]/config/routes.rb
+	Portaria::Engine.routes.draw do
+		devise_for :usuarios, class_name: "[NomeEngine]::[Model]"
+		...
+	end
+para
+	Portaria::Engine.routes.draw do
+		devise_for :usuarios, class_name: "[NomeEngine]::[Model]", module: :devise
+		...
+	end
+
+adicionar no arquivo [nome_aplicacao]/config/routes.rb
+	Rails.application.routes.draw do
+		root to: "[nome_engine]/application#index"
+		...
+	end
+
+criar o arquivo [nome_aplicacao]/app/views/application/index.html.erb
+
+adicionar no arquivo [nome_aplicacao]/app/controllers/application_controller.rb
+	class ApplicationController < ActionController::Base
+		...
+		def index
+		end
+	end
+
+adicionar no arquivo [nome_aplicacao]/config/environments/development.rb
+	Rails.application.configure do
+		...
+		config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+	end
+
+adicionar no arquivo [nome_engine]/app/controllers/[nome_engine]/application_controller.rb
+	module [Nome_Engine]
+		class ApplicationController < ::ApplicationController
+			before_action :authenticate_[model]!
+			before_action :configure_permitted_parameters, if: :devise_controller?
+
+			protected
+
+			def configure_permitted_parameters
+				devise_parameter_sanitizer.for(:sign_up) << :[atributos]
+			end	
+		end
+	end
+
+adicionar no arquivo [nome_aplicacao]/Gemfile
+	gem 'devise', 'x.x.x'
+
+com excessao da pasta [nome_aplicacao] e [nome_engine] que contem o device.
+	deletar o arquivo [nome_engine]/app/controllers/[nome_engine]/application_controller.rb
+	deletar a pasta [nome_engine]/app/views/layouts
+	adicionar no arquivo [nome_engine].gemsepc
+		s.add_dependency 'devise', 'x.x.x'
+
+modificar em todos os arquivos [nome_engine]/app/controllers/[nome_engine]/[nome_modelo_no_plural]_controller.rb
+	require_dependency "[nome_engine]/application_controller"
+	module [NomeEngine]
+		class [NomeModeloNoPlural]Controller < ApplicationController
+		...
+para
+		module [NomeEngine]
+		class [NomeModeloNoPlural]Controller < [nome_engine_com_device]::ApplicationController
+	...
+
+em todas as engines criar o arquivo [nome_engine]/spec/support/controller_helpers.rb
+	module ControllerHelpers
+		def sign_in(usuario = double('usuario'))
+			if usuario.nil?
+				allow(request.env['warden']).to receive(:authenticate!).and_throw(:warden, {:scope => :usuario})
+				allow(controller).to receive(:current_usuario).and_return(nil)
+			else
+				allow(request.env['warden']).to receive(:authenticate!).and_return(usuario)
+				allow(controller).to receive(:current_usuario).and_return(usuario)
+			end
+		end
+	end
+
+modificar em todos os arquivos [nome_engine]/spec/controllers/[nome_engine]/[nome_modelo_no_plural]_controller_spec.rb
+	module [NomeEngine]
+	RSpec.describe [NomeModeloNoPlural]Controller, :type => :controller do
+		...
+para
+	RSpec.describe [NomeModeloNoPlural]Controller, :type => :controller do
+		before{ sign_in }
+		...
+
+modificar em todos os arquivos [nome_engine]/spec/requests/[nome_engine]/[nome_engine]_[nome_modelo_no_plural]_spec.rb
+	...
+	expect(response).to have_http_status(200)
+	...
+para
+	...
+	expect(response).to have_http_status(302)
+	...
+
+adicionar em todos os arquivos [nome_engine]/spec/rails_helper.rb
+	RSpec.configure do |config|
+		...
+		config.include Devise::TestHelpers, :type => :controller
+		config.include ControllerHelpers, :type => :controller
+	end
+
+bundle install
+	
+entrar na pasta [nome_aplicacao]
+
+rake db:migrate:engines
+
+rake spec:engines
+
+------------------------------
+
+ADICIONANO APARTMENT A ENGINE COM DEVICE
+
+adicionar no arquivo [nome_engine].gemsepc
+	s.add_dependency 'apartment', 'x.x.x'
+
+entrar na pasta [nome_engine]
+
+bundle install
+
+rails generate apartment:install
+
+adicionar no arquivo lib/[nome_engine]/engine.rb
+	...
+	require 'apartment'
+
+	module [nome_engine]
+		...
+	end
+
+modificar em todos os arquivos [nome_engine]/spec/controllers/[nome_engine]/[nome_modelo_no_plural]_controller_spec.rb
+	module [NomeEngine]
+	RSpec.describe [NomeModeloNoPlural]Controller, :type => :controller do
+		...
+	describe
+		...
+		get :index, {}, ...
+		...
+	end
+	...
+	describe
+		get :show {id: ...}, ...
+	end
+	...
+para
+	RSpec.describe [NomeModeloNoPlural]Controller, :type => :controller do
+		...
+		let(:valid_scope) {
+			{path1: "path1", path2: "path2", path3: "path3"}
+		}
+	describe
+		...
+		get :index, {}.merge(valid_scope), ...
+		...
+	end
+	...
+	describe
+		get :show {id: ...}.merge(valid_scope), ...
+	end
+	...
+
+modificar em todos os arquivos [nome_engine]/spec/requests/[nome_engine]/[nome_engine]_[nome_modelo_no_plural]_spec.rb
+	RSpec.describe ...
+		describe ...
+				get [nome_engine].[models]_path
+				...
+		end
+para
+	RSpec.describe ...
+		let(:valid_scope){
+			{cliente_path: "cliente", entidade_path: "entidade", exercicio: "exercicio"}
+		}
+
+		describe "GET /principal_unidades_gestoras" do
+				allow([NomeEngine]::[NomeModel]).to receive(:tenants).and_return(['cliente_entidade_exercicio'])
+				get [nome_engine].[models]_path(valid_scope)
+				...
+		end
+
+modificar no arquivo [nome_engine]/config/initializers/apartment.rb
+	require 'apartment/elevators/subdomain'
+	...	
+	config.excluded_models = %w{}
+	...
+	config.use_schemas = true
+	...
+	# config.append_environment = true
+	...
+	config.tenant_names = lambda{ ToDo_Tenant_Or_User_Model.pluck :database }
+	...
+	Rails.application.config.middleware.use 'Apartment::Elevators::Subdomain'
+para
+	# require 'apartment/elevators/subdomain'
+	...
+	config.excluded_models = %w{[nome_models_sem_tenants]}
+	...
+	config.use_schemas = false
+	...
+	config.append_environment = true
+	...
+	config.tenant_names = lambda{ [Model].tenants }
+	...
+	# Rails.application.config.middleware.use 'Apartment::Elevators::Subdomain'
+
+adicionar no arquivo [nome_engine]/app/controllers/[nome_engine]/application_controller.rb
+	module [NomeEngine]
+		class ApplicationController < ::ApplicationController
+			...
+			before_action :configurar_tenant
+			...
+			protected
+			...
+			def configurar_tenant
+				Apartment::Tenant.switch([Model].tenant(params))
+			end
+		end
+	end
+
+adicionar no model o metodo tenant
+		...
+		after_create :instalar
+		...
+		def tenant
+			"#{path1}_#{path2}_#{path3}"
+		end
+
+		def tenant_params
+			{
+				path1: path1, 
+				path2: path2, 
+				path3: path3
+			}
+		end
+
+		...
+		private
+		....
+		def instalar
+			Apartment::Tenant.create(tenant)
+		end
+
+		class << self
+			def tenant(params)
+				[Model].joins(:[models]).where(path1: params[:path1], path2: params[:path2], path3: params[:path3]).first.try(:tenant) || tenant_padrao
+			end
+
+			def tenant_padrao
+				'aplicacao'
+			end
+
+			def tenant_params(params)
+				{
+					path1: params[:path1], 
+					path2: params[:path2], 
+					path3: params[:path3]
+				}
+			end
+
+			def tenants
+				all.map(&:tenant)
+			end
+		end
+		...
+
+adicionar no arquivo [nome_aplicacao]/config/routes.rb
+	root to: "[nome_engine_com_device]/application#index"
+	mount [EngineComDevice], at: '[nome_engine]'
+
+	def tenant_valid?(request)
+		[Model].tenants.include? request.path[1..-1].split('/')[0..2].join('_')
+	end
+
+	scope '/:path1/:path2/:path3', constraints: lambda { |request| tenant_valid? request } do
+		root to: "portaria/application#index", as: "tenant"
+		mount [OutraEngine], at: '[outra_engine]'
+		mount [OutraEngine], at: '[outra_engine]'
+		mount [OutraEngine], at: '[outra_engine]'
+	end
+
+adicionar no arquivo [nome_aplicacao]/Gemfile
+	gem 'apartment'
+
+entrar na pasta [nome_aplicacao]
+
+bundle install
+
+com excessao da pasta [nome_aplicacao] e [nome_engine] que contem o apartment.
+	adicionar no arquivo [nome_engine].gemsepc
+		s.add_dependency 'apartment', 'x.x.x'
+
+
+----------------
+obs.:
+adicionar nos teste de route
+	RSpec.describe ModelsController, :type => :routing do
+		routes{ Engine.routes }
+		...
+		it ... do
+			 expect(:get => '/models').to route_to('[nome_engine]/models#index')
+		end
+
+adicionar nos teste de controller
+	RSpec.describe ModelsController, :type => :controller do
+		routes{ Engine.routes }
+		...
+
+
+--------------------- NAO LEMBRO
+mudar nos teste de request
+
+RSpec.describe 'Models', :type => :request do
+	describe 'GET /[nome_engine]_models' do
+	it 'works! (now write some real specs)' do
+		get [nome_engine]_models_path
+		...
+para
+	describe 'GET /[nome_engine]_models' do
+	it 'works! (now write some real specs)' do
+		get [nome_engine].models_path
+		...

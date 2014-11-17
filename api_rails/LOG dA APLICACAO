@@ -1,0 +1,17 @@
+xyz
+	APLICACAO
+	PORTARIA
+		USUARIO (email, admin?)
+		CLIENTE (nome, path)
+		ENTIDADE (nome, path )
+		MODULO (nome)
+		CONTRATO (cliente, entidade, exercicio, validade)
+		INSTALACAO (contrato, modulo)
+		PERMISSAO ( contrato, usuario, criar, ler , atualizar, deletar )
+	PRINCIPAL
+		UNIDADE_GESTORA ( nome )
+	FROTA
+		ITEM ( nome, PRINCIPAL::UNIDADE_GESTORA )
+	ALMOXARIFADO
+		ITEM ( nome, PRINCIPAL::UNIDADE_GESTORA )
+	
