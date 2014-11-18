@@ -17,8 +17,8 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  port: 5434
-  username: vitor
+  port: 5433
+  username: teste
   password: teste
   host: localhost
   # For details on connection pooling, see rails configuration guide

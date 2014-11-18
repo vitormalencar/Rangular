@@ -11,38 +11,6 @@
 
  .module('olimpoWebApp.user',['ngRoute','ngResource'])
 
-//  .provider('myCSRF',[function(){
-//  	var headerName = 'X-CSRFToken';
-//  	var cookieName = 'X-CSRFToken';
-//  	var allowedMethods = ['POST'];
-
-//  	this.setHeaderName = function(n) {
-//  		headerName = n;
-//  	}
-//  	this.setCookieName = function(n) {
-//  		cookieName = n;
-//  	}
-//  	this.setAllowedMethods = function(n) {
-//  		allowedMethods = n;
-//  	}
-//  	this.$get = ['$cookies', function($cookies){
-//  		return {
-//  			'request': function(config) {
-//  				if(allowedMethods.indexOf(config.method) === -1) {
-//           // do something on success
-//           config.headers[headerName] = $cookies[cookieName];
-//       }
-//       return config;
-//   }
-// }
-// }];
-// }])
-
-//  .config(function($httpProvider) {
-//  	$httpProvider.interceptors.push('myCSRF');
-//  })
-
-
  /*
  ------------------------------------------------------------------------------
  | Factory of [service name]                                                 |
@@ -82,7 +50,7 @@
  ------------------------------------------------------------------------------
  */
 
- .controller('UserCtrl', ['$scope','userService', function ($scope,userService) {
+ .controller('UserCtrl', ['$scope','$cookies','userService', function ($scope,$cookies,userService) {
 
  	$scope.usuarios = [];
 
@@ -95,13 +63,10 @@
 
  	$scope.add_user = function () {
  		var user = new userService;
- 		user.nome = "vitor";
+ 		user.nome = "vitor"+Math.random();
  		user.email= "teste";
- 		console.log($scope.cookies)
  		userService.save(user);
  	};
-
  	$scope.set_userList();
- 	$scope.add_user();
  }]);
 

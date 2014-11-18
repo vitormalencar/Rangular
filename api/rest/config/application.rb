@@ -11,7 +11,7 @@ module Rest
 		config.middleware.insert_before "ActionDispatch::Static", "Rack::Cors" do
 			allow do
 				origins 'localhost'
-				resource '*', :headers => :any, :methods => [:get, :post, :options]
+				resource '*', :headers => :any, :methods => [:get, :post, :options], expose: 'X-CSRF-Token'
 			end
 		end
 	end
