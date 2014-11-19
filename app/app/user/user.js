@@ -24,7 +24,7 @@
  		'index':   { method: 'GET', isArray: true },
  		'show':    { method: 'GET', isArray: false },
  		'update':  { method: 'PUT' },
- 		'destroy': { method: 'DELETE' }
+ 		'desrtoy': { method: 'DELETE' }
  	}
  	);
  })
@@ -52,21 +52,31 @@
 
  .controller('UserCtrl', ['$scope','$cookies','userService', function ($scope,$cookies,userService) {
 
- 	$scope.usuarios = [];
-
  	$scope.set_userList = function() {
- 		userService
- 		.query(function(data){
- 			$scope.usuarios = data;
- 		});
+ 		$scope.usuarios = userService.query();
+
+ 	};
+ 	$scope.delete_User = function (userId) {
+ 		userService.desrtoy({ id: userId });
+ 		$scope.set_userList();
  	};
 
  	$scope.add_user = function () {
- 		var user = new userService;
- 		user.nome = "vitor"+Math.random();
- 		user.email= "teste";
- 		userService.save(user);
+ 		var user = {nome:'Vitor'+Math.random(),email:'teste'};
+ 		userService.create(user);
+ 		$scope.set_userList();
  	};
+
+ 	$scope.update_user = function(userId){
+ 		var user = userService.get({id: userId});
+ 		 user.id = userId;
+ 		 user.nome = "Roberto Vitor MAia";
+ 		 user.email = "Vitor Alencar";
+ 		 user.$update({id: userId});
+ 		// console.log(user);
+ 		// userService.update({ id: userId }, user);
+ 		 $scope.set_userList();
+ 	}
  	$scope.set_userList();
  }]);
 

@@ -22,7 +22,8 @@
     /*
     * httpProvide set the credencial cookies write  true
     */
-    // $httpProvider.defaults.withCredentials = true;
+    $httpProvider.defaults.withCredentials = true;
+    
     $httpProvider.interceptors.push(['$rootScope', function($rootScope) {
       return {
         request: function (config) {
