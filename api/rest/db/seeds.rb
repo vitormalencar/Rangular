@@ -6,6 +6,6 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-(1..1000).each do |u|
+(1..10000).each do |u|
 	User.create(nome: "algo" , email: 'mail')
 end

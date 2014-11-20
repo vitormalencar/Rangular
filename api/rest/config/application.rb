@@ -10,7 +10,7 @@ module Rest
 	class Application < Rails::Application
 		config.middleware.insert_before "ActionDispatch::Static", "Rack::Cors" do
 			allow do
-				origins 'localhost'
+				origins 'localhost:9000'
 				resource '*', :headers => :any, :methods => [:get, :post,:delete, :put], expose: 'X-CSRF-Token', credentials: true
 			end
 		end

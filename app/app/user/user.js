@@ -8,16 +8,15 @@
  * Controller of the olimpoWebApp
  */
  angular
-
  .module('olimpoWebApp.user',['ngRoute','ngResource'])
 
  /*
  ------------------------------------------------------------------------------
- | Factory of [service name]                                                 |
+ | Factory of [service name]                                                  |
  ------------------------------------------------------------------------------
  */
 
- .factory('userService', function($resource){
+ .factory('UserService', function($resource){
  	return $resource('http://0.0.0.0:3000/users/:id', { id: '@_id' },
  	{
  		'create':  { method: 'POST' },
@@ -50,33 +49,44 @@
  ------------------------------------------------------------------------------
  */
 
- .controller('UserCtrl', ['$scope','$cookies','userService', function ($scope,$cookies,userService) {
+ .controller('UserCtrl', ['$scope','UserService',function ($scope,UserService){
 
- 	$scope.set_userList = function() {
- 		$scope.usuarios = userService.query();
+ 	// $scope.usuarios = UserService.query();
 
+ 	$scope.set_UserList = function() {
+ 		UserService.index().$promise.then(function(users) {
+ 			console.log('Ok  Marcelo deu certo');
+ 			$scope.usuarios = users;
+ 		});
  	};
- 	$scope.delete_User = function (userId) {
- 		userService.desrtoy({ id: userId });
- 		$scope.set_userList();
+
+ 	$scope.delete_User = function (id) {
+ 		UserService.desrtoy({ id: id }).$promise.then(function(){
+ 			console.log('Usuario Deletado');
+ 			$scope.set_UserList();
+ 		});
  	};
 
- 	$scope.add_user = function () {
+ 	$scope.add_User = function () {
  		var user = {nome:'Vitor'+Math.random(),email:'teste'};
- 		userService.create(user);
- 		$scope.set_userList();
+ 		UserService.create(user).$promise.then(function(){
+ 			console.log('Usuario Criado '+user.nome);
+ 			$scope.set_UserList();
+ 		});
  	};
 
- 	$scope.update_user = function(userId){
- 		var user = userService.get({id: userId});
- 		 user.id = userId;
- 		 user.nome = "Roberto Vitor MAia";
- 		 user.email = "Vitor Alencar";
- 		 user.$update({id: userId});
- 		// console.log(user);
- 		// userService.update({ id: userId }, user);
- 		 $scope.set_userList();
+ 	$scope.update_User = function(id){
+ 		var user = UserService.show({id: id}).$promise.then(function(){
+ 			user.id = id;
+ 			user.nome = "Roberto Vitor MAia";
+ 			user.email = "Vitor Alencar";
+ 			UserService.update({ id: id }, user).$promise.then(function(){
+ 				console.log('Usuario '+user.nome+' atualizado');
+ 				$scope.set_UserList();
+ 			});
+
+ 		});
  	}
- 	$scope.set_userList();
+ 	$scope.set_UserList();
  }]);
 
