@@ -61,18 +61,30 @@
  	};
 
  	$scope.delete_User = function (id) {
- 		UserService.desrtoy({ id: id }).$promise.then(function(){
- 			console.log('Usuario Deletado');
- 			$scope.set_UserList();
- 		});
+ 		UserService.desrtoy({ id: id }).$promise.then(
+ 			function(response){
+ 				//console.log('Usuario Deletado');
+ 				console.log(response);
+ 				$scope.set_UserList();
+ 			},
+ 			function(response){
+ 				console.log(response);
+ 			}
+ 			);
  	};
 
  	$scope.add_User = function () {
- 		var user = {nome:'Vitor'+Math.random(),email:'teste'};
- 		UserService.create(user).$promise.then(function(){
- 			console.log('Usuario Criado '+user.nome);
- 			$scope.set_UserList();
- 		});
+ 		var user = {nome:'Vitor'+Math.random()};
+ 		UserService.create(user).$promise.then(
+ 			function(){
+ 				console.log('Usuario Criado '+user.nome);
+ 				$scope.set_UserList();
+ 			},
+ 			function(erro){
+ 				console.log(erro);
+ 				alert.log(erro.data.errors.email);
+ 			}
+ 		);
  	};
 
  	$scope.update_User = function(id){
