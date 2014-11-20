@@ -11,6 +11,7 @@
  angular
  .module('olimpoWebApp', [
   'olimpoWebApp.user',
+  'olimpoWebApp.login',
   'ngAnimate',
   'ngCookies',
   'ngResource',
@@ -46,7 +47,7 @@
  */
  $routeProvider
  .otherwise({
-  redirectTo: '/user'
+  redirectTo: '/login'
 })
 }]);
 

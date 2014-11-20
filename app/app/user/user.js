@@ -74,16 +74,13 @@
  	};
 
  	$scope.add_User = function () {
- 		var user = {nome:'Vitor'+Math.random()};
+ 		var user = {nome:'Vitor'+Math.random(),email:'vitor@mail.com'};
  		UserService.create(user).$promise.then(
  			function(){
  				console.log('Usuario Criado '+user.nome);
  				$scope.set_UserList();
- 			},
- 			function(erro){
- 				console.log(erro);
- 				alert.log(erro.data.errors.email);
  			}
+ 			
  		);
  	};
 
