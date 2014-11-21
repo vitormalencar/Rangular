@@ -57,7 +57,11 @@
  		UserService.index().$promise.then(function(users) {
  			console.log('Ok  Marcelo deu certo');
  			$scope.usuarios = users;
- 		});
+ 		},
+ 		function(response){
+ 			console.log(response);
+ 		}
+ 		);
  	};
 
  	$scope.delete_User = function (id) {
@@ -74,21 +78,20 @@
  	};
 
  	$scope.add_User = function () {
- 		var user = {nome:'Vitor'+Math.random(),email:'vitor@mail.com'};
- 		UserService.create(user).$promise.then(
+ 		var user = {nome:'Vitor'+Math.random(),email:'vitor@mail'};
+ 		UserService.save(user).$promise.then(
  			function(){
  				console.log('Usuario Criado '+user.nome);
  				$scope.set_UserList();
  			}
- 			
- 		);
+ 			);
  	};
 
  	$scope.update_User = function(id){
  		var user = UserService.show({id: id}).$promise.then(function(){
  			user.id = id;
  			user.nome = "Roberto Vitor MAia";
- 			user.email = "Vitor Alencar";
+ 			user.email = "vitor2@mail.com";
  			UserService.update({ id: id }, user).$promise.then(function(){
  				console.log('Usuario '+user.nome+' atualizado');
  				$scope.set_UserList();

@@ -40,19 +40,32 @@
  	.error(function(data, status, headers, config) {
  			 // called asynchronously if an error occurs
     		// or server returns response with an error status.
-    });
- 	$scope.Senha ="chiquititas";
- 	$scope.Email ="S@example.com";
- 	$scope.logar = function() {
- 		$http.post('http://0.0.0.0:3000/users/sign_in',{user: {email: 'vitor@vitor.com', password: '12345678'} })
+    	});
+ 	// $scope.logar = function() {
+ 	// 	$http.post('http://0.0.0.0:3000/users/sign_in',{user: {email: 'vitor@vitor.com', password: '12345678'} })
+ 	// 	.success(function(data) {
+ 	// 		console.log(data);
+ 	// 		$location.path('/user')
+ 	// 	})
+ 	// 	.error(function(data, status, headers, config) {
+ 	// 		 // called asynchronously if an error occurs
+  //   		// or server returns response with an error status.
+  //   	})
+ 	// };
+ 	$scope.login = function () {
+ 		
+ 		$scope.dataLoading = true;
+ 		$http.post('http://0.0.0.0:3000/users/sign_in',{user: {email: $scope.Email, password: $scope.Senha} })
  		.success(function(data) {
  			console.log(data);
- 			$location.path('/user')
+ 			$location.path('/produto')
  		})
  		.error(function(data, status, headers, config) {
- 			 // called asynchronously if an error occurs
-    		// or server returns response with an error status.
-    	})
+ 			console.log(data.error);
+ 			$scope.dataLoading = false;
+ 			$scope.error = data.error;
+ 			
+ 		})
  	};
  }]);
 

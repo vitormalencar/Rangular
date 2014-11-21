@@ -12,6 +12,7 @@
  .module('olimpoWebApp', [
   'olimpoWebApp.user',
   'olimpoWebApp.login',
+  'olimpoWebApp.produto',
   'ngAnimate',
   'ngCookies',
   'ngResource',
@@ -19,12 +20,11 @@
   'ngSanitize',
   'ngTouch',
   ])
- .config(['$httpProvider','$routeProvider', function($httpProvider,$routeProvider) {
+ .config(['$httpProvider','$routeProvider','$locationProvider', function($httpProvider,$routeProvider,$locationProvider) {
     /*
     * httpProvide set the credencial cookies write  true
     */
     $httpProvider.defaults.withCredentials = true;
-    
     $httpProvider.interceptors.push(['$rootScope', function($rootScope) {
       return {
         request: function (config) {
@@ -49,6 +49,7 @@
  .otherwise({
   redirectTo: '/login'
 })
+  // $locationProvider.html5Mode(true);
 }]);
 
 

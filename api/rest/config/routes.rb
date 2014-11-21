@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :produtos
+
   root to: "application#home"
   devise_for :users
   resources :users
