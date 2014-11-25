@@ -10,9 +10,11 @@
  */
  angular
  .module('olimpoWebApp', [
-  'olimpoWebApp.user',
   'olimpoWebApp.login',
-  'olimpoWebApp.produto',
+  'olimpoWebApp.user',
+  'olimpoWebApp.userService',
+  'olimpoWebApp.produtoController',
+  'olimpoWebApp.produtoService',
   'ngAnimate',
   'ngCookies',
   'ngResource',
@@ -28,14 +30,18 @@
     $httpProvider.interceptors.push(['$rootScope', function($rootScope) {
       return {
         request: function (config) {
-          config.headers['X-CSRF-Token'] = $rootScope.x_csrf_token;
+          config.headers['X-CSRF-Token'] = localStorage.getItem('x_csrf_token');
           return config;
         },
         response: function (result) {
           var x_csrf_token = result.headers('X-CSRF-Token');
+          var User = result.headers('User');
           if(x_csrf_token){
-            $rootScope.x_csrf_token = x_csrf_token;
+            localStorage.setItem('x_csrf_token', x_csrf_token);
           }
+          if (User) {
+            localStorage.setItem('User', angular.fromJson(User));
+          };
           return result;
         }
       }

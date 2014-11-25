@@ -10,8 +10,6 @@
  angular
  .module('olimpoWebApp.login',['ngRoute','ngResource'])
 
-
-
  /*
  ------------------------------------------------------------------------------
  | Routers of [Entitty name]                                                  |
@@ -20,8 +18,8 @@
 
  .config(['$routeProvider', function($routeProvider) {
  	$routeProvider.when('/login', {
- 		templateUrl: 'login/login.html',
- 		controller: 'LoginCtrl'
+ 		templateUrl: 'components/login/login.html',
+ 		controller: 'LoginCtrl',
  	});
  }])
 
@@ -32,39 +30,25 @@
  ------------------------------------------------------------------------------
  */
 
- .controller('LoginCtrl', ['$scope','$http','$location',function ($scope,$http,$location){
+ .controller('LoginCtrl', ['$scope','$rootScope','$http','$location',function ($scope,$rootScope,$http,$location){
  	$http.get('http://0.0.0.0:3000/users/sign_in')
  	.success(function(data) {
+
  		console.log(data);
  	})
- 	.error(function(data, status, headers, config) {
- 			 // called asynchronously if an error occurs
-    		// or server returns response with an error status.
-    	});
- 	// $scope.logar = function() {
- 	// 	$http.post('http://0.0.0.0:3000/users/sign_in',{user: {email: 'vitor@vitor.com', password: '12345678'} })
- 	// 	.success(function(data) {
- 	// 		console.log(data);
- 	// 		$location.path('/user')
- 	// 	})
- 	// 	.error(function(data, status, headers, config) {
- 	// 		 // called asynchronously if an error occurs
-  //   		// or server returns response with an error status.
-  //   	})
- 	// };
+
  	$scope.login = function () {
- 		
  		$scope.dataLoading = true;
  		$http.post('http://0.0.0.0:3000/users/sign_in',{user: {email: $scope.Email, password: $scope.Senha} })
  		.success(function(data) {
- 			console.log(data);
- 			$location.path('/produto')
+ 			$rootScope.user = data;
+ 			console.log($rootScope.user);
+ 			$location.path('/produto');
  		})
  		.error(function(data, status, headers, config) {
  			console.log(data.error);
  			$scope.dataLoading = false;
  			$scope.error = data.error;
- 			
  		})
  	};
  }]);

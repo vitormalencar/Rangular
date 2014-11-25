@@ -31,7 +31,7 @@
           <li><a ng-href="#/about">About</a></li>
           <li><a ng-href="#">Contact</a></li>
         </ul> -->
-        <h3 class="text-muted">olimpoWeb <span class="badge">provisorio</span></h3>
+        <h3 class="text-muted">olimpoWeb <span class="badge">provisorio</span> </h3>
       </div>
 
       <div ng-view=""></div>
@@ -59,14 +59,17 @@
     <script src="bower_components/angular-touch/angular-touch.js"></script>
     <script src="bower_components/bootstrap-material-design/dist/js/material.min.js"></script>
     <script src="bower_components/bootstrap-material-design/dist/js/ripples.min.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="app.js"></script>
-        <script src="user/user.js"></script>
-        <script src="produto/produto.js"></script>
-        <script src="login/login.js"></script>
+        <script src="components/user/userController.js"></script>
+         <script src="components/user/userService.js"></script>
+        <script src="components/produto/produtoController.js"></script>
+        <script src="components/produto/produtoService.js"></script>
+        <script src="components/login/login.js"></script>
         <!-- endbuild -->
 </body>
 </html>

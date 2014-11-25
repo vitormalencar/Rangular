@@ -11,7 +11,7 @@ module Rest
 		config.middleware.insert_before 0, Rack::Cors do
 			allow do
 				origins 'localhost:9000'
-				resource '*', :headers => :any, :methods => [:get, :post,:delete, :put], expose: 'X-CSRF-Token', credentials: true
+				resource '*', :headers => :any, :methods => [:get, :post,:delete, :put], expose: ['X-CSRF-Token','User'], credentials: true
 			end
 		end
 	end
