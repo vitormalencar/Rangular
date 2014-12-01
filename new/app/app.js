@@ -10,6 +10,7 @@
 angular
     .module('olimpoWebApp', [
         'olimpoWebApp.login',
+        'olimpoWebApp.sessionService',
         'olimpoWebApp.produtoController',
         'olimpoWebApp.produtoService',
         'ngAnimate',
@@ -24,6 +25,7 @@ angular
             $http.get('http://0.0.0.0:3000')
                 .then(
                     function(response) {
+                        console.log(response);
                         // to verify later
                         // localStorage.setItem('User', response.headers('User'));
                     }, function(error) {
@@ -34,8 +36,8 @@ angular
             )
         }
     ])
-    .config(['$httpProvider', '$routeProvider', '$locationProvider',
-        function($httpProvider, $routeProvider, $locationProvider) {
+    .config(['$httpProvider', '$routeProvider',
+        function($httpProvider, $routeProvider) {
             $httpProvider.defaults.withCredentials = true;
             $httpProvider.interceptors.push(['$rootScope',
                 function($rootScope) {

@@ -2,9 +2,9 @@
 
 /**
  * @ngdoc function
- * @name olimpoWebApp.controller:MainCtrl
+ * @name olimpoWebApp.controller:Loigin
  * @description
- * # MainCtrl
+ * # Loigin
  * Controller of the olimpoWebApp
  */
 angular
@@ -12,7 +12,7 @@ angular
 
 /*
  ------------------------------------------------------------------------------
- | Routers of [Entitty name]                                                  |
+ | Routers of [Login]                                                         |
  ------------------------------------------------------------------------------
  */
 
@@ -24,14 +24,13 @@ angular
             resolve: {
                 userVerification: ['$location', '$rootScope', '$http', '$q', '$timeout',
                     function($location, $rootScope, $http, $q, $timeout) {
-                        console.log(localStorage.getItem('User') !== 'null');
                         var deferred = $q.defer();
                         if (localStorage.getItem('User') !== 'null') {
                             deferred.reject();
+                            console.log("Usuario logado ! , indo para o /produto");
                             $location.path('/produto');
-
                         } else {
-                            console.log("passei direto ", localStorage.getItem('User'));
+                            console.log("Sem Usuario, indo para o /login");
                             deferred.resolve();
                         };
                         return deferred.promise;
@@ -45,7 +44,7 @@ angular
 
 /*
  ------------------------------------------------------------------------------
- | Controllers  of [Entitty name]                                             |
+ | Controllers  of [Login]                                                    |
  ------------------------------------------------------------------------------
  */
 
@@ -62,16 +61,12 @@ angular
             })
                 .success(function(data) {
                     localStorage.setItem('User', JSON.stringify(data));
-                    var user = localStorage.getItem('User');
-                    user = JSON.parse(user);
-                    console.log(user);
                     $location.path('/produto');
                 })
 
             .error(function(data, status, headers, config) {
                 console.log(data, status);
                 $scope.dataLoading = false;
-                // $scope.error = data.error;
             })
         }
     }

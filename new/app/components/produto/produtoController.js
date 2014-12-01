@@ -23,8 +23,8 @@ angular
                 templateUrl: 'components/produto/produto.html',
                 controller: 'ProdutoCtrl',
                 resolve: {
-                    userVerification: ['$location', '$rootScope', '$http', '$q',
-                        function($location, $rootScope, $http, $q) {
+                    userVerification: ['$location', '$rootScope', '$http', '$q','authService',
+                        function($location, $rootScope, $http, $q,authService) {
                             console.log(localStorage.getItem('User') === 'null');
                             var deferred = $q.defer();
                             if (localStorage.getItem('User') === 'null') {
@@ -32,6 +32,7 @@ angular
                                 deferred.reject();
                                 $location.path('/login');
                             } else {
+                                console.log(authService.isAuthenticaded());
                                 console.log("Usuario logado ! , indo para o /produto");
                                 deferred.resolve();
                             };
@@ -39,8 +40,7 @@ angular
                         }
                     ]
                 }
-            }
-        )
+            })
     }
 ])
 

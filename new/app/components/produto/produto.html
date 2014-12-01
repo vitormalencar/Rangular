@@ -1,0 +1,16 @@
+<button class="btn btn-large btn-primary" ng-click="create()"> + adicionar Produto</button>
+<hr>
+<div class="list-group col-md-6" ng-repeat="produto in produtos">
+	<div class="list-group-item">
+		<div class="row-action-primary">
+			<i class="mdi-action-loyalty"></i>
+		</div>
+		<div class="row-content">
+			<div class="least-content mdi-content-clear" ng-click="delete({{produto.id}})"></div>
+			<h4 class="list-group-item-heading">{{produto.nome}} {{produto.id}}</h4>
+			<p class="list-group-item-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod</p>
+			<button class="btn btn-small btn-success mdi-editor-border-color" ng-click="update({{produto.id}})"> Update produto</button>
+		</div>
+	</div>
+	<div class="list-group-separator"></div>
+</div>

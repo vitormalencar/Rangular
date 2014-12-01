@@ -1,23 +1,22 @@
-'use strict';
+ 'use strict';
 
 /**
  * @ngdoc function
- * @name olimpoWebApp.controller:MainCtrl
+ * @name olimpoWebApp.Service:ProdutoService
  * @description
- * # MainCtrl
- * Controller of the olimpoWebApp
+ * # ProdutoService
+ * Service of the olimpoWebApp
  */
-angular
- .module('olimpoWebApp.userService',[])
-
- /*
+ angular
+ .module('olimpoWebApp.produtoService',[])
+/*
  ------------------------------------------------------------------------------
- | Factory of [User]                                                          |
+ | Factory of [Produto]                                                       |
  ------------------------------------------------------------------------------
  */
 
- .factory('UserService', function($resource){
- 	return $resource('http://0.0.0.0:3000/users/:id', { id: '@_id' },
+ .factory('ProdutoService', function($resource){
+ 	return $resource('http://0.0.0.0:3000/produtos/:id', { id: '@_id' },
  	{
  		'create':  { method: 'POST' },
  		'index':   { method: 'GET', isArray: true },
